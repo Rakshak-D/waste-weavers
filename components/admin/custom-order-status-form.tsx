@@ -1,0 +1,10 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+export function CustomOrderStatusForm({ id, status, adminNotes }: { id: string; status: string; adminNotes: string | null }) {
+  const router = useRouter(); const [nextStatus, setNextStatus] = useState(status); const [notes, setNotes] = useState(adminNotes ?? ""); const [message, setMessage] = useState<string | null>(null); const [busy, setBusy] = useState(false);
+  async function submit() { setBusy(true); setMessage(null); try { const response = await fetch(`/api/admin/custom-orders/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: nextStatus, adminNotes: notes || null }) }); const result = await response.json(); if (!response.ok) throw new Error(result.message ?? "Request could not be updated."); setMessage("Updated."); router.refresh(); } catch (error) { setMessage(error instanceof Error ? error.message : "Request could not be updated."); } finally { setBusy(false); } }
+  return <div className="space-y-4"><label className="block text-sm font-medium">Workflow status<select value={nextStatus} onChange={(event) => setNextStatus(event.target.value)} className="mt-2 w-full border border-[#cdbb9f] bg-[#fffdf8] px-3 py-2"><option>REQUESTED</option><option>UNDER_REVIEW</option><option>QUOTED</option><option>APPROVED</option><option>IN_PROGRESS</option><option>COMPLETED</option><option>CANCELLED</option></select></label><label className="block text-sm font-medium">Internal admin notes<textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={5} className="mt-2 w-full border border-[#cdbb9f] bg-transparent p-3" /></label><p className="text-xs leading-5 text-[#665548]">These notes are internal and are not shown in customer account pages.</p><button type="button" onClick={submit} disabled={busy} className="bg-[#5f4630] px-4 py-2 text-sm font-medium text-[#fffdf8] disabled:opacity-60">{busy ? "Saving…" : "Save request"}</button>{message && <p className="text-sm text-[#5e4b3a]" role="status">{message}</p>}</div>;
+}

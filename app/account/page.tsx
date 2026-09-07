@@ -1,0 +1,21 @@
+import Link from "next/link";
+
+import { AccountFrame, StatusBadge, formatTimelineDate } from "@/components/account/account-ui";
+import { getCustomerOrders, getCustomerRentals } from "@/lib/account/service";
+import { formatMoney } from "@/lib/pricing/engine";
+import { requirePageUser } from "@/lib/auth/server";
+
+export const dynamic = "force-dynamic";
+
+export default async function AccountPage() {
+  const user = await requirePageUser("/account");
+  let orders: Awaited<ReturnType<typeof getCustomerOrders>> = [];
+  let rentals: Awaited<ReturnType<typeof getCustomerRentals>> = [];
+  try {
+    [orders, rentals] = await Promise.all([getCustomerOrders(user.id, 5), getCustomerRentals(user.id, 5)]);
+  } catch {
+    return <AccountFrame title={`Hello${user.name ? `, ${user.name}` : ""}.`} intro="Your account data is temporarily unavailable. Please try again shortly."><div className="mt-10 border-y border-[#dfd2be] py-12 text-sm text-[#68584a]">We could not load your customer dashboard.</div></AccountFrame>;
+  }
+  const upcoming = rentals.filter((rental) => rental.group === "upcoming");
+  return <AccountFrame title={`Hello${user.name ? `, ${user.name}` : ""}.`} intro="Your orders, rental dates, and delivery details in one place."><div className="mt-10 grid gap-5 sm:grid-cols-3"><Link href="/shop" className="border border-[#cdbb9f] bg-[#fffdf8] p-5 transition hover:border-[#6b4b30]"><p className="eyebrow">Start something new</p><p className="mt-3 font-serif text-2xl">Shop collection →</p></Link><Link href="/account/orders" className="border border-[#cdbb9f] bg-[#fffdf8] p-5 transition hover:border-[#6b4b30]"><p className="eyebrow">History</p><p className="mt-3 font-serif text-2xl">View orders →</p></Link><Link href="/account/addresses" className="border border-[#cdbb9f] bg-[#fffdf8] p-5 transition hover:border-[#6b4b30]"><p className="eyebrow">Delivery</p><p className="mt-3 font-serif text-2xl">Manage addresses →</p></Link></div><div className="mt-14 grid gap-12 lg:grid-cols-[1fr_0.9fr]"><section><div className="flex items-end justify-between gap-4 border-b border-[#cdbb9f] pb-4"><div><p className="eyebrow">Next up</p><h2 className="mt-2 font-serif text-3xl">Upcoming rentals</h2></div><Link className="nav-link text-sm" href="/account/rentals">All rentals →</Link></div>{upcoming.length ? <div className="divide-y divide-[#dfd2be]">{upcoming.slice(0, 3).map((rental) => <Link key={rental.id} href={`/account/rentals/${rental.id}`} className="block py-5 transition hover:bg-[#fffdf8]"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="font-serif text-2xl">{rental.products[0]?.name ?? "Rental décor"}</p><p className="mt-2 text-sm text-[#68584a]">{formatTimelineDate(rental.startAt)} → {formatTimelineDate(rental.endAt)}</p></div><StatusBadge status={rental.status} kind="rental" /></div></Link>)}</div> : <div className="border-b border-[#dfd2be] py-8"><p className="font-serif text-2xl">You don&apos;t have any upcoming rentals yet.</p><Link href="/shop" className="nav-link mt-3 inline-block text-sm">Explore rentals →</Link></div>}</section><section><div className="flex items-end justify-between gap-4 border-b border-[#cdbb9f] pb-4"><div><p className="eyebrow">Recent activity</p><h2 className="mt-2 font-serif text-3xl">Recent orders</h2></div><Link className="nav-link text-sm" href="/account/orders">Order history →</Link></div>{orders.length ? <div className="divide-y divide-[#dfd2be]">{orders.slice(0, 3).map((order) => <Link key={order.id} href={`/account/orders/${order.id}`} className="block py-5 transition hover:bg-[#fffdf8]"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="font-medium">{order.orderNumber}</p><p className="mt-1 text-sm text-[#665548]">{formatTimelineDate(order.createdAt)} · {order._count.items} {order._count.items === 1 ? "item" : "items"}</p></div><p className="font-medium">{formatMoney(Number(order.grandTotal ?? 0), order.currency)}</p></div></Link>)}</div> : <div className="border-b border-[#dfd2be] py-8"><p className="font-serif text-2xl">You haven&apos;t placed any orders yet.</p><Link href="/shop" className="nav-link mt-3 inline-block text-sm">Shop collection →</Link></div>}</section></div></AccountFrame>;
+}

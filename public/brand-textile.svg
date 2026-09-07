@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Woven textile texture</title>
+  <desc id="desc">An abstract woven textile pattern in warm earth tones.</desc>
+  <rect width="1200" height="900" fill="#d8c5aa"/>
+  <path d="M-80 250C180 80 330 410 560 240S970 70 1280 250" fill="none" stroke="#9a7652" stroke-width="95" opacity=".76"/>
+  <path d="M-90 530C180 350 360 700 590 500S980 370 1290 540" fill="none" stroke="#6c4b30" stroke-width="72" opacity=".74"/>
+  <path d="M-70 770C160 600 380 860 620 710S1010 590 1270 760" fill="none" stroke="#efe7d9" stroke-width="44" opacity=".95"/>
+  <g stroke="#fffaf0" stroke-width="5" opacity=".5">
+    <path d="M0 0L1200 900M120 0L1200 810M300 0L1200 675M480 0L1200 540M660 0L1200 405M840 0L1200 270M1020 0L1200 135"/>
+  </g>
+</svg>

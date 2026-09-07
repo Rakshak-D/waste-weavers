@@ -1,0 +1,6 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { updateAdminInventoryUnit, AdminServiceError } from "@/lib/admin/service";
+import { AuthenticationRequiredError, AuthorizationDeniedError } from "@/lib/auth/server";
+const schema = z.object({ status: z.enum(["AVAILABLE", "RESERVED", "RENTED", "RETURN_PENDING", "INSPECTION", "MAINTENANCE", "DAMAGED", "RETIRED"]), condition: z.enum(["NEW", "GOOD", "FAIR", "DAMAGED"]) });
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) { try { const parsed = schema.safeParse(await request.json()); if (!parsed.success) return NextResponse.json({ message: "Inventory details are invalid." }, { status: 400 }); return NextResponse.json(await updateAdminInventoryUnit((await params).id, parsed.data)); } catch (error) { if (error instanceof AuthenticationRequiredError) return NextResponse.json({ message: "Please sign in." }, { status: 401 }); if (error instanceof AuthorizationDeniedError) return NextResponse.json({ message: "Admin access is required." }, { status: 403 }); if (error instanceof AdminServiceError) return NextResponse.json({ code: error.code, message: error.message }, { status: error.code === "NOT_FOUND" ? 404 : 409 }); return NextResponse.json({ message: "Inventory unit could not be updated." }, { status: 500 }); } }

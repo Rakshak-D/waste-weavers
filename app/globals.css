@@ -1,0 +1,133 @@
+@import "tailwindcss";
+@import "react-day-picker/style.css";
+
+:root {
+  --background: #f7f2e9;
+  --foreground: #332a22;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-serif: Georgia, Cambria, "Times New Roman", serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a, button, input, select, summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid #5f4630;
+  outline-offset: 3px;
+}
+
+.nav-link {
+  transition: color 180ms ease;
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: #5f4630;
+}
+
+.mobile-nav-link {
+  padding: 0.55rem 0.65rem;
+}
+
+.eyebrow {
+  color: #6f4c2f;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.badge {
+  border: 1px solid rgba(255, 253, 248, 0.7);
+  background: rgba(51, 42, 34, 0.72);
+  color: #fffdf8;
+  padding: 0.3rem 0.55rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.rental-calendar .rdp-root {
+  --rdp-accent-color: #5f4630;
+  --rdp-accent-background-color: #eadfce;
+  --rdp-range_middle-background-color: #eadfce;
+  --rdp-range_middle-color: #332a22;
+  --rdp-day-width: 2.45rem;
+  --rdp-day-height: 2.45rem;
+  margin: 0;
+  max-width: none;
+}
+
+.rental-calendar .rdp-caption_label,
+.rental-calendar .rdp-weekday {
+  color: #5e4b3a;
+  opacity: 1;
+  font-size: 0.78rem;
+}
+
+.rental-calendar .rdp-day_button {
+  border-radius: 999px;
+  font-size: 0.82rem;
+}
+
+.rental-calendar .rdp-day_button:hover {
+  background: #eadfce;
+}
+
+.status-panel {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border: 1px solid;
+  padding: 0.85rem 1rem;
+  font-size: 0.9rem;
+}
+
+.status-success {
+  border-color: #9cb39b;
+  background: #edf4ea;
+  color: #355636;
+}
+
+.status-warning {
+  border-color: #d1b47e;
+  background: #fbf1dc;
+  color: #76521f;
+}
+
+.status-danger {
+  border-color: #d4a29b;
+  background: #f9eae6;
+  color: #7c332a;
+}
+
+.textile-rule {
+  background-image: repeating-linear-gradient(90deg, #cdbb9f 0, #cdbb9f 1px, transparent 1px, transparent 7px);
+  height: 1px;
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

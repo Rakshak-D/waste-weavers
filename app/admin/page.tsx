@@ -1,0 +1,16 @@
+import Link from "next/link";
+
+import { AdminPage, AdminShell } from "@/components/admin/admin-shell";
+import { getAdminOverview } from "@/lib/admin/service";
+import { getAdminImpactSummary } from "@/lib/admin/impact";
+import { requirePageAdmin } from "@/lib/auth/server";
+
+export const dynamic = "force-dynamic";
+
+export default async function AdminPageRoute() {
+  const user = await requirePageAdmin();
+  let metrics;
+  let impact = [] as Awaited<ReturnType<typeof getAdminImpactSummary>>;
+  try { [metrics, impact] = await Promise.all([getAdminOverview(), getAdminImpactSummary()]); } catch { metrics = null; }
+  return <AdminShell adminName={user.name ?? user.email}><AdminPage title="Dashboard" description="A live operational view of the Waste Weavers catalogue, physical inventory, orders, rentals, and recorded impact.">{metrics ? <><div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{[["Products", metrics.products, "/admin/products"], ["Active products", metrics.activeProducts, "/admin/products?status=ACTIVE"], ["Inventory units", metrics.totalInventory, "/admin/inventory"], ["Available units", metrics.availableInventory, "/admin/inventory?status=AVAILABLE"], ["In maintenance", metrics.maintenanceInventory, "/admin/inventory?status=MAINTENANCE"], ["Active rentals", metrics.activeRentals, "/admin/rentals?group=active"], ["Upcoming rentals", metrics.upcomingRentals, "/admin/rentals?group=upcoming"], ["Orders", metrics.orders, "/admin/orders"]].map(([label, value, href]) => <Link key={String(label)} href={String(href)} className="border border-[#d5c4ac] bg-[#fffdf8] p-5 transition hover:border-[#6b4b30]"><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#6f4c2f]">{label}</p><p className="mt-3 font-serif text-4xl text-[#5f4630]">{String(value)}</p></Link>)}</div><section className="mt-10 border border-[#d5c4ac] bg-[#fffdf8] p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#6f4c2f]">Recorded catalogue impact</p><div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{impact.length ? impact.map((item) => <div key={`${item.metricType}-${item.unit}`}><p className="font-serif text-3xl text-[#5f4630]">{item.value} {item.unit}</p><p className="mt-1 text-xs text-[#68584a]">{item.metricType.replaceAll("_", " ")}</p></div>) : <p className="text-sm text-[#68584a]">No supported impact metrics are recorded yet.</p>}</div><p className="mt-5 text-xs text-[#665548]">Catalogue representation only; values are grouped by metric type and unit.</p></section><section className="mt-6 border border-[#d5c4ac] bg-[#fffdf8] p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#6f4c2f]">Pending operations</p><p className="mt-2 font-serif text-3xl">{metrics.pendingOrders} orders awaiting progression</p><p className="mt-2 text-sm text-[#68584a]">Status changes remain constrained by the operational transition rules.</p><Link href="/admin/orders?status=PENDING" className="mt-5 inline-block text-sm font-medium text-[#5f4630] underline underline-offset-4">Review pending orders →</Link></section></> : <div className="mt-10 border border-[#d5c4ac] bg-[#fffdf8] p-8"><p className="font-serif text-2xl">Dashboard data unavailable.</p><p className="mt-2 text-sm text-[#68584a]">Connect PostgreSQL to load live operational metrics.</p></div>}</AdminPage></AdminShell>;
+}

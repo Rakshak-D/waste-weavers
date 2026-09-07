@@ -1,0 +1,7 @@
+import { AdminPage, AdminShell } from "@/components/admin/admin-shell";
+import { CategoryForm } from "@/components/admin/admin-forms";
+import { getAdminCategories } from "@/lib/admin/service";
+import { requirePageAdmin } from "@/lib/auth/server";
+export const dynamic = "force-dynamic";
+export default async function CategoriesPage() { const user = await requirePageAdmin(); const categories = await getAdminCategories(); return <AdminShell adminName={user.name ?? user.email}><AdminPage title="Categories" description="Organize products by stable, unique slugs. Categories with products are edited rather than deleted."><div className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]"><section className="border-t border-[#cdbb9f]"><div className="divide-y divide-[#dfd2be]">{categories.map((category) => <div key={category.id} className="flex flex-wrap justify-between gap-4 py-5"><div><p className="font-serif text-2xl">{category.name}</p><p className="mt-1 text-xs text-[#665548]">{category.slug} · {category._count.products} products</p></div><details><summary className="cursor-pointer text-sm text-[#5f4630] underline underline-offset-4">Edit</summary><div className="mt-3 w-72"><CategoryForm initial={category} /></div></details></div>)}</div></section><section><p className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-[#6f4c2f]">New category</p><CategoryForm /></section></div></AdminPage></AdminShell>; }
+

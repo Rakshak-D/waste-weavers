@@ -1,0 +1,51 @@
+{
+  "name": "waste-weavers",
+  "version": "0.1.0",
+  "description": "Circular e-commerce platform for sustainable event décor using upcycled textiles, rental, reuse, and physical inventory lifecycle management.",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:push": "prisma db push",
+    "db:health": "tsx scripts/db-health-check.ts",
+    "db:seed": "tsx prisma/seed.ts",
+    "e2e": "playwright test",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.7.0",
+    "bcryptjs": "^3.0.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
+    "lucide-react": "^0.511.0",
+    "next": "^16.3.4",
+    "next-auth": "^5.0.0-beta.32",
+    "next-themes": "^0.4.4",
+    "react": "^19.2.0",
+    "react-day-picker": "^10.0.1",
+    "react-dom": "^19.2.0",
+    "tailwind-merge": "^3.3.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/postcss": "^4.1.4",
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "eslint": "^9.22.0",
+    "eslint-config-next": "^16.3.4",
+    "prisma": "^6.7.0",
+    "tailwindcss": "^4.1.4",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "vitest": "^5.0.0"
+  }
+}
